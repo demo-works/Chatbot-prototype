@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        #chatbox {
+            background-color: #0e1b33;
+            color: white;
+            width: 300px;
+            height: 400px;
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-family: 'Arial', sans-serif;
+        }
+        .user-message, .bot-message {
+            background-color: #1a2b45;
+            padding: 8px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+        #input-box {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 14px;
+        }
+        #send-btn {
+            padding: 10px;
+            background-color: #1a2b45;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #send-btn:hover {
+            background-color: #0e1b33;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chatbox"></div>
+    <input type="text" id="input-box" placeholder="Type a message...">
+    <button id="send-btn">Send</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#send-btn').click(function() {
+                let userMessage = $('#input-box').val();
+                $('#chatbox').append('<div class="user-message">' + userMessage + '</div>');
+                $('#input-box').val('');
+
+                // Send the message to Dialogflow API
+                $.ajax({
+                    url: 'https://api.dialogflow.com/v1/query?v=20150910',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer AIzaSyBPVp1eYruwcc1JF9KBsXKgGb2yciqN9VY'
+                    },
+                    data: JSON.stringify({
+                        query: userMessage,
+                        lang: 'en',
+                        sessionId: '12345'
+                    }),
+                    success: function(response) {
+                        let botMessage = response.result.fulfillment.speech;
+                        $('#chatbox').append('<div class="bot-message">' + botMessage + '</div>');
+                    }
+                });
+            });
+        });
+    </script>
+
+
+</body></html>
